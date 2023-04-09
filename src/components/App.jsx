@@ -1,52 +1,55 @@
 import React, { Component } from 'react';
-import { nanoid } from 'nanoid';
 import { GlobalStyle } from 'components/Globalstyle.js';
-import { Layout } from './Layout.js';
-import { Form } from 'components/Form/Form.jsx';
+import { Layout, Header, MainHeader } from './Layout.js';
+import { ContactsForm } from 'components/ContactsForm/ContactsForm.jsx';
+import { ContactList } from 'components/ContactList/ContactList.jsx';
+import { Filter } from 'components/Filter/Filter.jsx';
 import initialContacts from '../contacts.json';
-
-const id = nanoid();
 
 export class App extends Component {
   state = {
     contacts: [...initialContacts],
     filter: '',
   };
-  addContact = ({name, number}) => {
-    const newContact = {
-      name,
-      number,
-    };
-    console.log(newContact)
-    this.setState(({contacts}) => ({
-      contacts: [newContact, ...contacts],
-    }));
-  }
 
-  formSubmitHandler = data => {
-    console.log(data);
-  }
-  
+  addContact = newContact => {
+    this.state.contacts.filter(contact => contact.name === newContact.name)
+      .length
+      ? alert(`${newContact.name}: is already in contacts`)
+      : this.setState(prevState => ({
+          contacts: [...prevState.contacts, newContact],
+        }));
+  };
+
+  deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
+  };
+
+  changeFilter = event => {
+    this.setState({ filter: event.currentTarget.value });
+  };
+
+  getFilterContacts = () => {
+    const normalizedFilter = this.state.filter.toLowerCase();
+    return this.state.contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  };
+
   render() {
     return (
       <Layout>
         <GlobalStyle />
-        <h1>Phonebook</h1>
-        <Form onSubmit={this.formSubmitHandler} />
-        <h2>Contacts</h2>
-        <label>
-          Find contacts by name
-          <input
-            type="text"
-            name="filter"
-            required
-            value={this.state.filter}
-            onChange={this.handleChange}
-          />
-        </label>
-        <ul key={id}>
-          <li>{ }</li>
-        </ul>
+        <MainHeader>Phonebook</MainHeader>
+        <ContactsForm onSubmit={this.addContact} />
+        <Header>Contacts</Header>
+        <Filter onChange={this.changeFilter} value={this.state.filter}></Filter>
+        <ContactList
+          contacts={this.getFilterContacts()}
+          onDeleteContact={this.deleteContact}
+        ></ContactList>
       </Layout>
     );
   }
