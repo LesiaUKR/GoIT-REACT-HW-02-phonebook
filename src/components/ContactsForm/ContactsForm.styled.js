@@ -30,7 +30,7 @@ export const FormLabel = styled.label`
 `;
 export const Field = styled(FormikField)`
   padding: 5px;
-  width: auto;
+  width: 300px;
   border: 2px solid darkgreen;
   border-radius: 4px;
   outline: none;
@@ -43,8 +43,8 @@ export const Field = styled(FormikField)`
 `;
 
 export const AddButton = styled.button`
-  padding: 20px;
-  width: 200px;
+  padding: 10px;
+  width: 150px;
   border: 2px solid darkgreen;
   border-radius: 50px;
   background-color: white;
